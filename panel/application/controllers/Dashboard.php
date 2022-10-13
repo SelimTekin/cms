@@ -15,8 +15,4 @@ class Dashboard extends CI_Controller {
 	{
 		$this->load->view("{$this->viewFolder}/index");
 	}
-
-	public function test(){
-		echo "test";
-	}
 }

@@ -81,10 +81,6 @@
 				<a href="https://themeforest.net/item/infinity-responsive-web-app-kit/16230780" class="m-t-sm btn btn-block btn-danger">Buy Now</a>
 			</div>
 	<!--</div><!-- #app-customizer -->
-		
-	<!-- SIDE PANEL -->
-	<?php $this->load->view("includes/right-aside"); ?>
-	<!-- /#side-panel -->
 
 	<?php $this->load->view("includes/include_script"); ?>
 </body>

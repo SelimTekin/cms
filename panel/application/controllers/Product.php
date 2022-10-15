@@ -24,6 +24,22 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
         $viewData->subViewFolder = "list";
         $viewData->items = $items;
 
-        $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData); # viewDaata içindeki değişkenleri kullanabilmek için (product_v'yi viewFolder adında gönderecek)
+        $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData); # viewData içindeki değişkenleri index dosyasında kullanabilmek için (product_v'yi viewFolder adında gönderecek)
+    }
+
+    public function new_form(){
+
+        $viewData = new stdClass();
+
+        // view'e gönderilecek değişkenlerin set edilmesi
+        $viewData->viewFolder = $this->viewFolder;
+        $viewData->subViewFolder = "add";
+
+        # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
+        $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
+    }
+
+    public function save(){
+        echo "saved";
     }
 }

@@ -62,7 +62,23 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
             // Hata ekranda gosterilir...
 
         if($validate){
-            echo "Kayıt işlemi başlar...";
+            $insert = $this->product_model->add(
+                array(
+                    "title"       => $this->input->post("title"),
+                    "description" => $this->input->post("description"),
+                    "url"         => "test...",
+                    "rank"        => 0,
+                    "isActive"    => 1,
+                    "createdAt"   => date("Y-m-d H:i:s") # yıl-ay-gun saat:dakika:saniye
+                )
+            );
+
+            if($insert){
+                echo "Kayıt işlemi başarılıdır...";
+            }
+            else{
+                echo "İşlem başarısızdır";
+            }
         }
         else{
             // Hata varsa yani input doldurulmamışsa mesela, sayfa yeniden yüklenecek

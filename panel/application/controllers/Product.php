@@ -65,8 +65,16 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
             echo "Kayıt işlemi başlar...";
         }
         else{
-            echo validation_errors();
-            // echo "Bir şeyler ters gitti...";
+            // Hata varsa yani input doldurulmamışsa mesela, sayfa yeniden yüklenecek
+            $viewData = new stdClass();
+
+            // view'e gönderilecek değişkenlerin set edilmesi
+            $viewData->viewFolder = $this->viewFolder;
+            $viewData->subViewFolder = "add";
+            $viewData->form_error = true;
+
+            # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
+            $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
         }
     }
 }

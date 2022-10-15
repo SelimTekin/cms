@@ -40,6 +40,33 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
     }
 
     public function save(){
-        echo "saved";
+
+        $this->load->library("form_validation");
+        
+        // Kurallar yazilir
+        $this->form_validation->set_rules("title", "Başlık", "required|trim"); # input'un name'i, kural'ın(rule) ismi, kurallar (trim başındaki ve sonundaki boşlukları kontrol eder)
+
+        $this->form_validation->set_message(
+            array(
+                "required" => "<b>{field}</b> alanı doldurulmalıdır" # field kuralın adına denk geliyor (örneğin yukarıdaki kuralın adı olan "Başlık")
+            )
+        );
+
+        // Form validation calistirilir
+        // TRUE - FALSE
+        $validate = $this->form_validation->run();
+
+        // Basarili ise
+            // Kayit islemi baslar
+        // Basarisiz ise
+            // Hata ekranda gosterilir...
+
+        if($validate){
+            echo "Kayıt işlemi başlar...";
+        }
+        else{
+            echo validation_errors();
+            // echo "Bir şeyler ters gitti...";
+        }
     }
 }

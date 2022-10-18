@@ -11,9 +11,16 @@ class Product_model extends CI_Model{
     }
 
     // Tüm kayıtları getirecek olan metot
-    public function get_all(){
+    public function get_all($where = array()){ # tek şart olarak id'yi kullanmayabiliriz bu yüzden birden fazla şartı kabul etmesi için array'e dönüştürdük
 
-        return $this->db->get($this->tableName)->result();
+        return $this->db->where($where)->get($this->tableName)->result();
+
+    }
+
+    // Tek bir kayıt getirecek olan metot (o yüzden result yerine row yazdık)
+    public function get($where = array()){ # tek şart olarak id'yi kullanmayabiliriz bu yüzden birden fazla şartı kabul etmesi için array'e dönüştürdük
+
+        return $this->db->where($where)->get($this->tableName)->row();
 
     }
 

@@ -17,7 +17,11 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
         $viewData = new stdClass();
 
         // Tablodan verilerin getirilmesi
-        $items = $this->product_model->get_all();
+        $items = $this->product_model->get_all(
+            // array(
+            //     "isActive" => 1 # isActive 1 olan kayıtları getirir
+            // )
+        );
 
         // View'e gönderilecek değişkenlerin set edilmesi
         $viewData->viewFolder = $this->viewFolder;
@@ -92,5 +96,25 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
             # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
             $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
         }
+    }
+
+    public function update_form($id){
+
+        $viewData = new stdClass();
+
+        // Tablodan verilerin getirilmesi
+        $item = $this->product_model->get(
+            array(
+                "id" => $id,
+            )
+        );
+
+        // view'e gönderilecek değişkenlerin set edilmesi
+        $viewData->viewFolder = $this->viewFolder;
+        $viewData->subViewFolder = "update";
+        $viewData->item = $item;
+
+        # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
+        $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
     }
 }

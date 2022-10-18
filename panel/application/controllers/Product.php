@@ -66,8 +66,8 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
                 array(
                     "title"       => $this->input->post("title"),
                     "description" => $this->input->post("description"),
-                    "url"         => "test...",
-                    "rank"        => 0,
+                    "url"         => convertToSEO($this->input->post("title")),
+                    "rank"        => 0, 
                     "isActive"    => 1,
                     "createdAt"   => date("Y-m-d H:i:s") # yıl-ay-gun saat:dakika:saniye
                 )

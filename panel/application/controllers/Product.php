@@ -74,10 +74,10 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
             );
 
             if($insert){
-                echo "Kayıt işlemi başarılıdır...";
+                redirect(base_url("product"));
             }
             else{
-                echo "İşlem başarısızdır";
+                redirect(base_url("product"));
             }
         }
         else{

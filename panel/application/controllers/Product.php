@@ -9,7 +9,7 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
 
         $this->viewFolder = "product_v";
 
-        // contruct'ın altında tanımlıyoruz yoksa load isimli metodu tanımaz
+        // construct'ın altında tanımlıyoruz yoksa load isimli metodu tanımaz
         $this->load->model("product_model");
     }
 
@@ -116,5 +116,68 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
 
         # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
         $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
+    }
+
+    public function update($id){
+
+        $this->load->library("form_validation");
+        
+        // Kurallar yazilir
+        $this->form_validation->set_rules("title", "Başlık", "required|trim"); # input'un name'i, kural'ın(rule) ismi, kurallar (trim başındaki ve sonundaki boşlukları kontrol eder)
+
+        $this->form_validation->set_message(
+            array(
+                "required" => "<b>{field}</b> alanı doldurulmalıdır" # field kuralın adına denk geliyor (örneğin yukarıdaki kuralın adı olan "Başlık")
+            )
+        );
+
+        // Form validation calistirilir
+        // TRUE - FALSE
+        $validate = $this->form_validation->run();
+
+        // Basarili ise
+            // Kayit islemi baslar
+        // Basarisiz ise
+            // Hata ekranda gosterilir...
+
+        if($validate){
+            $update = $this->product_model->update(
+                array(
+                    "id"          =>$id,
+                ),
+                array(
+                    "title"       => $this->input->post("title"),
+                    "description" => $this->input->post("description"),
+                    "url"         => convertToSEO($this->input->post("title")),
+                )
+            );
+
+            if($update){
+                redirect(base_url("product"));
+            }
+            else{
+                redirect(base_url("product"));
+            }
+        }
+        else{
+            // Hata varsa yani input doldurulmamışsa mesela, sayfa yeniden yüklenecek
+            $viewData = new stdClass();
+
+            // Tablodan verilerin getirilmesi
+            $item = $this->product_model->get(
+                array(
+                    "id" => $id,
+                )
+            );
+
+            // view'e gönderilecek değişkenlerin set edilmesi
+            $viewData->viewFolder = $this->viewFolder;
+            $viewData->subViewFolder = "update";
+            $viewData->form_error = true;
+            $viewData->item = $item;
+
+            # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
+            $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
+        }
     }
 }

@@ -180,4 +180,20 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
             $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
         }
     }
+
+    public function delete($id){
+        $delete = $this->product_model->delete(
+            array(
+                "id"    => $id,
+            )
+        );
+
+        // TODO ALert Sistemi Eklenecek...
+        if($delete){
+            redirect(base_url("product"));
+        }
+        else{
+            redirect(base_url("product"));
+        }
+    }
 }

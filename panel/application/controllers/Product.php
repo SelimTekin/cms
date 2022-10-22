@@ -18,7 +18,7 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
 
         // Tablodan verilerin getirilmesi
         $items = $this->product_model->get_all(
-            arraY(), "rank ASC"
+            array(), "rank ASC"
         );
 
         // View'e gönderilecek değişkenlerin set edilmesi
@@ -235,6 +235,19 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
                 )
             );
         }
+
+    }
+
+    public function image_form(){
+
+        $viewData = new stdClass();
+
+        // view'e gönderilecek değişkenlerin set edilmesi
+        $viewData->viewFolder = $this->viewFolder;
+        $viewData->subViewFolder = "image";
+
+        # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
+        $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
 
     }
 }

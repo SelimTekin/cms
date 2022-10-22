@@ -238,7 +238,7 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
 
     }
 
-    public function image_form(){
+    public function image_form($id){
 
         $viewData = new stdClass();
 
@@ -246,8 +246,36 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
         $viewData->viewFolder = $this->viewFolder;
         $viewData->subViewFolder = "image";
 
+        $viewData->item = $this->product_model->get(
+            array(
+                "id"    => $id,
+            )
+        );
+
         # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
         $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
+
+    }
+
+    public function image_upload(){
+
+        // Bunlar ayar oluyor
+        // $config["allowed_types"] = "*"; # bütün tipler veya
+        $config["allowed_types"] = "jpg | jpeg | png"; # hangi türde dosyayı yükleyeceğimiz
+        $config["upload_path"] = "uploads/$this->viewFolder/"; # Dosyalar nereye yüklencek
+
+        # upload sınıfını yüklerken nasıl yüklemek istediğimizi ya da ne şartlarda ya da nereye yükleyeceğizmizi belirttik $config ile
+        $this->load->library("upload", $config);
+
+        // upload sınıfındaki do_upload metodunu kullanarak bu işlemi(upload işlemini) gerçekleştirme
+        $upload = $this->upload->do_upload("file"); # Neyi upload edeceğini dropzone'dan kaynaklı varsayılan olarak ismi(name) file olarak geliyor
+
+        if($upload){
+            echo "islem basarili";
+        }
+        else{
+            echo "islem basarisiz";
+        }
 
     }
 }

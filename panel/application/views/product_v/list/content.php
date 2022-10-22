@@ -30,7 +30,9 @@
                                 <td><?php echo $item->title; ?></td>
                                 <td><?php echo $item->description; ?></td>
                                 <td>
-                                        <input 
+                                        <input
+                                            data-url="<?php echo base_url("product/isActiveSetter/$item->id") ?>"
+                                            class="isActive" 
                                             id="switch-2-2" 
                                             type="checkbox"
                                             data-switchery

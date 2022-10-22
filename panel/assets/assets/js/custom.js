@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-    $(".remove-btn").click(function(e){
+    $(".remove-btn").click(function(){
 
         var $data_url = $(this).data("url"); // başında data- olan attributeleri keywordleri buluyor
 
@@ -19,6 +19,22 @@ $(document).ready(function(){
             }
           });
     });
+
+    $(".isActive").change(function(){
+
+      var $data = $(this).prop("checked");
+      var $data_url = $(this).data("url");
+
+      if(typeof $data !== "undefined" && typeof $data_url !== "undefined"){
+        
+        $.post($data_url, {data: $data}, function(response){ // jquery'nin post metodu içerisine varsayılan olarak 3 tane parametre alır(url, obje türüdne bir nesne(input name'i), callback function(handle edicek fonksiyon. Mesela $data_url'den gelecek cevap(echo $id)))
+                     
+        });
+
+      }
+
+    })
+
 
     // Swal.fire({
     //     title: 'Error!',

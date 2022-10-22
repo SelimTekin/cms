@@ -196,4 +196,24 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
             redirect(base_url("product"));
         }
     }
+
+    public function isActiveSetter($id){
+        
+        if($id){
+            
+            $isActive = ($this->input->post("data") === "true") ? 1 : 0;
+
+            $this->product_model->update( # update 2 tane parametre alır where,data
+                array(
+                    "id"    => $id,
+                ),
+
+                arraY(
+                    "isActive"  => $isActive,
+                )
+                );
+
+        }
+
+    }
 }

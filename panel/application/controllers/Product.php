@@ -259,9 +259,9 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
 
     public function image_upload(){
 
-        // Bunlar ayar oluyor
+        // Bunlar ayar( konfigürasyon(config) ) oluyor
         // $config["allowed_types"] = "*"; # bütün tipler veya
-        $config["allowed_types"] = "jpg | jpeg | png"; # hangi türde dosyayı yükleyeceğimiz
+        $config["allowed_types"] = "jpg|jpeg|png"; # hangi türde dosyayı yükleyeceğimiz(yazarken aralarda boşluk bırakmadan yaz)
         $config["upload_path"] = "uploads/$this->viewFolder/"; # Dosyalar nereye yüklencek
 
         # upload sınıfını yüklerken nasıl yüklemek istediğimizi ya da ne şartlarda ya da nereye yükleyeceğizmizi belirttik $config ile

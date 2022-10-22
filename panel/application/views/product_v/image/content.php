@@ -22,86 +22,48 @@
     <div class="col-md-12">
         <div class="widget">
             <div class="widget-body">
-                <table class="table table-bordered table-striped table-hover">
-                    <thead>
-                        <th>#id</th>
-                        <th>Görsel</th>
-                        <th>Resim adı</th>
-                        <th>Durumu</th>
-                        <th>İşlem</th>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="w100 text-center">#1</td>
-                            <td class="w100 text-center"><img width="30" src="https://yt3.ggpht.com/bWL_Q46Ob6MxdYmMP7hWaox_pFLja8uh1iI02F9CtV-eaeR409j3xfWLG0GbmTzVEwX5R38ur2k=s900-c-k-c0x00ffffff-no-rj" alt="" class="img-responsive"></td>
-                            <td>deneme-urunu.jpg</td>
-                            <td class="w100 text-center">
-                                <input
-                                data-url="<?php echo base_url("product/isActiveSetter/") ?>"
-                                class="isActive" 
-                                id="switch-2-2" 
-                                type="checkbox"
-                                data-switchery
-                                data-color="#10c469"
-                                <?php echo (true) ? "checked" : ""; ?>
-                            />
-                            </td>
-                            <td class="w100 text-center">
-                                <button 
-                                    data-url="<?php echo base_url("product/delete/"); # id'yi parametre olarak verdik ?>"
-                                    class="btn btn-sm btn-danger btn-outline btn-block remove-btn">
-                                    <i class="fa fa-trash"></i> Sil
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="w100 text-center">#1</td>
-                            <td class="w100 text-center"><img width="30" src="https://yt3.ggpht.com/bWL_Q46Ob6MxdYmMP7hWaox_pFLja8uh1iI02F9CtV-eaeR409j3xfWLG0GbmTzVEwX5R38ur2k=s900-c-k-c0x00ffffff-no-rj" alt="" class="img-responsive"></td>
-                            <td>deneme-urunu.jpg</td>
-                            <td class="w100 text-center">
-                                <input
-                                data-url="<?php echo base_url("product/isActiveSetter/") ?>"
-                                class="isActive" 
-                                id="switch-2-2" 
-                                type="checkbox"
-                                data-switchery
-                                data-color="#10c469"
-                                <?php echo (true) ? "checked" : ""; ?>
-                            />
-                            </td>
-                            <td class="w100 text-center">
-                                <button 
-                                    data-url="<?php echo base_url("product/delete/"); # id'yi parametre olarak verdik ?>"
-                                    class="btn btn-sm btn-danger btn-outline btn-block remove-btn">
-                                    <i class="fa fa-trash"></i> Sil
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="w100 text-center">#1</td>
-                            <td class="w100 text-center"><img width="30" src="https://yt3.ggpht.com/bWL_Q46Ob6MxdYmMP7hWaox_pFLja8uh1iI02F9CtV-eaeR409j3xfWLG0GbmTzVEwX5R38ur2k=s900-c-k-c0x00ffffff-no-rj" alt="" class="img-responsive"></td>
-                            <td>deneme-urunu.jpg</td>
-                            <td class="w100 text-center">
-                                <input
-                                data-url="<?php echo base_url("product/isActiveSetter/") ?>"
-                                class="isActive" 
-                                id="switch-2-2" 
-                                type="checkbox"
-                                data-switchery
-                                data-color="#10c469"
-                                <?php echo (true) ? "checked" : ""; ?>
-                            />
-                            </td>
-                            <td class="w100 text-center">
-                                <button 
-                                    data-url="<?php echo base_url("product/delete/"); # id'yi parametre olarak verdik ?>"
-                                    class="btn btn-sm btn-danger btn-outline btn-block remove-btn">
-                                    <i class="fa fa-trash"></i> Sil
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <?php if(empty($item_images)){ ?>
+                    <div class="alert alert-info text-center">
+                        <p>Burada herhangi bir kayıt bulunamadı.</a></p>
+                    </div>
+                <?php } else{ ?>
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                            <th>#id</th>
+                            <th>Görsel</th>
+                            <th>Resim adı</th>
+                            <th>Durumu</th>
+                            <th>İşlem</th>
+                        </thead>
+                        <tbody>
+                            <?php foreach($item_images as $image){ ?>
+                                <tr>
+                                    <td class="w100 text-center">#<?php echo $image->id; ?></td>
+                                    <td class="w100 text-center"><img width="30" src="<?php echo base_url("uploads/{$viewFolder}/$image->img_url"); ?>" alt="<?php echo $image->img_url; ?>" class="img-responsive"></td>
+                                    <td><?php echo $image->img_url; ?></td>
+                                    <td class="w100 text-center">
+                                        <input
+                                        data-url="<?php echo base_url("product/isActiveSetter/") ?>"
+                                        class="isActive" 
+                                        id="switch-2-2" 
+                                        type="checkbox"
+                                        data-switchery
+                                        data-color="#10c469"
+                                        <?php echo ($image->id) ? "checked" : ""; ?>
+                                    />
+                                    </td>
+                                    <td class="w100 text-center">
+                                        <button 
+                                            data-url="<?php echo base_url("product/delete/"); # id'yi parametre olarak verdik ?>"
+                                            class="btn btn-sm btn-danger btn-outline btn-block remove-btn">
+                                            <i class="fa fa-trash"></i> Sil
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                <?php } ?>
             </div><!-- .widget-body -->
         </div>
 	</div>

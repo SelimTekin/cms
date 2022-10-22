@@ -253,6 +253,12 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
             )
         );
 
+        $viewData->item_images = $this->product_image_model->get_all( # view'e gönderebilmek için $viewData'nın bir property'si -attribute'ı- olarak tanımladık
+            array(
+                "product_id"    => $id
+            )
+        );
+
         # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
         $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
 

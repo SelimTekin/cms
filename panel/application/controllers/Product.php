@@ -11,6 +11,7 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
 
         // construct'ın altında tanımlıyoruz yoksa load isimli metodu tanımaz
         $this->load->model("product_model");
+        $this->load->model("product_image_model");
     }
 
     public function index(){
@@ -257,7 +258,7 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
 
     }
 
-    public function image_upload(){
+    public function image_upload($id){
 
         // Bunlar ayar( konfigürasyon(config) ) oluyor
         // $config["allowed_types"] = "*"; # bütün tipler veya
@@ -271,7 +272,21 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
         $upload = $this->upload->do_upload("file"); # Neyi upload edeceğini dropzone'dan kaynaklı varsayılan olarak ismi(name) file olarak geliyor
 
         if($upload){
-            echo "islem basarili";
+            
+            # upload edilen dosya ile ilgili bilgilerin arasındaki ismini alabiliriz. data dediğimiz zaman array döndürür
+            $uploaded_file = $this->upload->data("file_name");
+
+            $this->product_image_model->add(
+                array(
+                    "img_url"       => $uploaded_file,
+                    "rank"          => 0,
+                    "isActive"      => 1,
+                    "isCover"       => 0,
+                    "createdAt"     => date("Y-m-d H:i:s"),
+                    "product_id"    => $id
+                )
+            );
+
         }
         else{
             echo "islem basarisiz";

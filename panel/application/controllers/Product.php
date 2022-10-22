@@ -18,9 +18,7 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
 
         // Tablodan verilerin getirilmesi
         $items = $this->product_model->get_all(
-            // array(
-            //     "isActive" => 1 # isActive 1 olan kayıtları getirir
-            // )
+            arraY(), "rank ASC"
         );
 
         // View'e gönderilecek değişkenlerin set edilmesi
@@ -208,11 +206,34 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
                     "id"    => $id,
                 ),
 
-                arraY(
+                array(
                     "isActive"  => $isActive,
                 )
                 );
 
+        }
+
+    }
+
+    public function rankSetter(){
+
+        $data = $this->input->post("data");
+
+        parse_str($data, $order); # data'dan gelenleri order isimli değişkene aktar (data bir array ve &'leri patlatarak parse eder yani diziye aktarır)
+        
+        $items = $order["ord"];
+
+        foreach($items as $rank => $id){ # rank->key, id->value ( Array( [0] => 6)) rank = 0, id = 6
+            $this->product_model->update(
+                array(
+                    "id"        => $id,
+                    "rank !="   => $rank # sırası değiştirilen verinin altında kalanları değiştirmemek için. Yani konumu zaten değişmemişse bunu hiç değiştirme
+                ),
+                
+                array(
+                    "rank"      => $rank
+                )
+            );
         }
 
     }

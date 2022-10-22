@@ -11,9 +11,9 @@ class Product_model extends CI_Model{
     }
 
     // Tüm kayıtları getirecek olan metot
-    public function get_all($where = array()){ # tek şart olarak id'yi kullanmayabiliriz bu yüzden birden fazla şartı kabul etmesi için array'e dönüştürdük
+    public function get_all($where = array(), $order = "id ASC"){ # tek şart olarak id'yi kullanmayabiliriz bu yüzden birden fazla şartı kabul etmesi için array'e dönüştürdük. order ise hiçbir şey girilmezse id'yi ascending olarak getirsin yani sıralı
 
-        return $this->db->where($where)->get($this->tableName)->result();
+        return $this->db->where($where)->order_by($order)->get($this->tableName)->result();
 
     }
 

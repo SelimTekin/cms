@@ -1,3 +1,7 @@
-body{
-    font-size: 45px!important;
+.w100{
+    width: 100px;
+}
+
+td img{
+    margin: 0px auto; /*yukarıdan aşağıdan 0 piksel, sağdan ve soldan ortalar*/
 }

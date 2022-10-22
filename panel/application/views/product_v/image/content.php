@@ -1,10 +1,5 @@
 <div class="row">
     <div class="col-md-12">
-		<h4 class="m-b-lg">
-            Ürünün fotoğrafları...
-        </h4>
-	</div>
-    <div class="col-md-12">
         <div class="widget">
             <div class="widget-body">
                 <form action="../api/dropzone" class="dropzone" data-plugin="dropzone" data-options="{ url: '../api/dropzone'}">
@@ -37,10 +32,10 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>#1</td>
-                            <td><img width="30" src="https://yt3.ggpht.com/bWL_Q46Ob6MxdYmMP7hWaox_pFLja8uh1iI02F9CtV-eaeR409j3xfWLG0GbmTzVEwX5R38ur2k=s900-c-k-c0x00ffffff-no-rj" alt="" class="img-responsive"></td>
+                            <td class="w100 text-center">#1</td>
+                            <td class="w100 text-center"><img width="30" src="https://yt3.ggpht.com/bWL_Q46Ob6MxdYmMP7hWaox_pFLja8uh1iI02F9CtV-eaeR409j3xfWLG0GbmTzVEwX5R38ur2k=s900-c-k-c0x00ffffff-no-rj" alt="" class="img-responsive"></td>
                             <td>deneme-urunu.jpg</td>
-                            <td>
+                            <td class="w100 text-center">
                                 <input
                                 data-url="<?php echo base_url("product/isActiveSetter/") ?>"
                                 class="isActive" 
@@ -49,20 +44,21 @@
                                 data-switchery
                                 data-color="#10c469"
                                 <?php echo (true) ? "checked" : ""; ?>
-                            /></td>
-                            <td>
+                            />
+                            </td>
+                            <td class="w100 text-center">
                                 <button 
                                     data-url="<?php echo base_url("product/delete/"); # id'yi parametre olarak verdik ?>"
-                                    class="btn btn-sm btn-danger btn-outline remove-btn">
+                                    class="btn btn-sm btn-danger btn-outline btn-block remove-btn">
                                     <i class="fa fa-trash"></i> Sil
                                 </button>
                             </td>
                         </tr>
                         <tr>
-                            <td>#1</td>
-                            <td><img width="30" src="https://yt3.ggpht.com/bWL_Q46Ob6MxdYmMP7hWaox_pFLja8uh1iI02F9CtV-eaeR409j3xfWLG0GbmTzVEwX5R38ur2k=s900-c-k-c0x00ffffff-no-rj" alt="" class="img-responsive"></td>
+                            <td class="w100 text-center">#1</td>
+                            <td class="w100 text-center"><img width="30" src="https://yt3.ggpht.com/bWL_Q46Ob6MxdYmMP7hWaox_pFLja8uh1iI02F9CtV-eaeR409j3xfWLG0GbmTzVEwX5R38ur2k=s900-c-k-c0x00ffffff-no-rj" alt="" class="img-responsive"></td>
                             <td>deneme-urunu.jpg</td>
-                            <td>
+                            <td class="w100 text-center">
                                 <input
                                 data-url="<?php echo base_url("product/isActiveSetter/") ?>"
                                 class="isActive" 
@@ -71,20 +67,21 @@
                                 data-switchery
                                 data-color="#10c469"
                                 <?php echo (true) ? "checked" : ""; ?>
-                            /></td>
-                            <td>
+                            />
+                            </td>
+                            <td class="w100 text-center">
                                 <button 
                                     data-url="<?php echo base_url("product/delete/"); # id'yi parametre olarak verdik ?>"
-                                    class="btn btn-sm btn-danger btn-outline remove-btn">
+                                    class="btn btn-sm btn-danger btn-outline btn-block remove-btn">
                                     <i class="fa fa-trash"></i> Sil
                                 </button>
                             </td>
                         </tr>
                         <tr>
-                            <td>#1</td>
-                            <td><img width="30" src="https://yt3.ggpht.com/bWL_Q46Ob6MxdYmMP7hWaox_pFLja8uh1iI02F9CtV-eaeR409j3xfWLG0GbmTzVEwX5R38ur2k=s900-c-k-c0x00ffffff-no-rj" alt="" class="img-responsive"></td>
+                            <td class="w100 text-center">#1</td>
+                            <td class="w100 text-center"><img width="30" src="https://yt3.ggpht.com/bWL_Q46Ob6MxdYmMP7hWaox_pFLja8uh1iI02F9CtV-eaeR409j3xfWLG0GbmTzVEwX5R38ur2k=s900-c-k-c0x00ffffff-no-rj" alt="" class="img-responsive"></td>
                             <td>deneme-urunu.jpg</td>
-                            <td>
+                            <td class="w100 text-center">
                                 <input
                                 data-url="<?php echo base_url("product/isActiveSetter/") ?>"
                                 class="isActive" 
@@ -93,11 +90,12 @@
                                 data-switchery
                                 data-color="#10c469"
                                 <?php echo (true) ? "checked" : ""; ?>
-                            /></td>
-                            <td>
+                            />
+                            </td>
+                            <td class="w100 text-center">
                                 <button 
                                     data-url="<?php echo base_url("product/delete/"); # id'yi parametre olarak verdik ?>"
-                                    class="btn btn-sm btn-danger btn-outline remove-btn">
+                                    class="btn btn-sm btn-danger btn-outline btn-block remove-btn">
                                     <i class="fa fa-trash"></i> Sil
                                 </button>
                             </td>

@@ -266,11 +266,18 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
 
     public function image_upload($id){
 
+        $file_name = convertToSEO(pathinfo($_FILES["file"]["name"], PATHINFO_FILENAME)) . "." . pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION);
+        
+        # uzantı ve dosya ismini ayrı ayrı almak istersek aşağıda yazıyor
+        // $ext = pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION); # uzantıyı aldık
+        // $file_name = convertToSEO(pathinfo($_FILES["file"]["name"], PATHINFO_FILENAME)); # dosya ismini uzantısız aldık
+
         // Bunlar ayar( konfigürasyon(config) ) oluyor
         // $config["allowed_types"] = "*"; # bütün tipler veya
         $config["allowed_types"] = "jpg|jpeg|png"; # hangi türde dosyayı yükleyeceğimiz(yazarken aralarda boşluk bırakmadan yaz)
         $config["upload_path"] = "uploads/$this->viewFolder/"; # Dosyalar nereye yüklencek
-
+        $config["file_name"] = $file_name;
+        
         # upload sınıfını yüklerken nasıl yüklemek istediğimizi ya da ne şartlarda ya da nereye yükleyeceğizmizi belirttik $config ile
         $this->load->library("upload", $config);
 

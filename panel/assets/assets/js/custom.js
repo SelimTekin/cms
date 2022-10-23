@@ -46,10 +46,31 @@ $(document).ready(function(){
 
     });
 
-    // Swal.fire({
-    //     title: 'Error!',
-    //     text: 'Do you want to continue',
-    //     icon: 'error',
-    //     confirmButtonText: 'Cool'
-    // })
+    var uploadSection = Dropzone.forElement("#dropzone"); // Dropzone plugin'ini kullanarak forElement metdouyla id'si dropzone olan elementin instance'ını uploadSection değişkeni altında kullanma
+
+    uploadSection.on("complete", function(file){ // uploadSection complete olduğunda bir tane callback function çağırma
+      
+      var $data_url = $("#dropzone").data("url");
+
+      $.post($data_url, {}, function(response){ // parametreler -> birincisi - hangi url'ye post yapıcam, ikincisi - hangi bilgileri göndericem, üçüncüsü - bir cevap geldiğinde bunu nasıl handle edicem
+        
+        $(".image_list_container").html(response);
+
+        $('[data-switchery]').each(function(){
+          var $this = $(this),
+              color = $this.attr('data-color') || '#188ae2',
+              jackColor = $this.attr('data-jackColor') || '#ffffff',
+              size = $this.attr('data-size') || 'default'
+  
+          new Switchery(this, {
+            color: color,
+            size: size,
+            jackColor: jackColor
+          });
+        });
+
+      })
+
+    })
+
 })

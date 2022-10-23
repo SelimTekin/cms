@@ -306,4 +306,23 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
         }
 
     }
+
+    public function refresh_image_list($id){
+
+        $viewData = new stdClass();
+
+        // view'e gönderilecek değişkenlerin set edilmesi
+        $viewData->viewFolder = $this->viewFolder;
+        $viewData->subViewFolder = "image";
+
+        $viewData->item_images = $this->product_image_model->get_all( # view'e gönderebilmek için $viewData'nın bir property'si -attribute'ı- olarak tanımladık
+            array(
+                "product_id"    => $id
+            )
+        );
+
+        # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
+        $render_html = $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/render_elements/image_list_v", $viewData, true); # true olursa sayfada görünmez bu değişken içinde saklanır(echo $render_html ile ekranda görebiliriz). Buna render page deniyor
+        echo $render_html;
+    }
 }

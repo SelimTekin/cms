@@ -83,7 +83,9 @@
             "<?php echo base_url("assets") ?>/libs/bower/switchery/dist/switchery.min.css",
             "<?php echo base_url("assets") ?>/libs/bower/switchery/dist/switchery.min.js",
             "<?php echo base_url("assets") ?>/libs/bower/lightbox2/dist/css/lightbox.min.css",
-            "<?php echo base_url("assets") ?>/libs/bower/lightbox2/dist/js/lightbox.min.js"
+            "<?php echo base_url("assets") ?>/libs/bower/lightbox2/dist/js/lightbox.min.js",
+            // (Dropzone is not defined hatası alınır bu kod BURADA olmazsa)bunun burada olması önemli yoksa custom.js dosyası dropzone.min.js dosaysından önce yükleniyor böylece dropzone plugin'inde hata veriyor. Kısacası dropzone custom'dan önce yüklenmeli sayfada
+            "<?php echo base_url("assets"); ?>/assets/js/custom.js"
         ]
     };
 </script>

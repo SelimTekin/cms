@@ -37,6 +37,52 @@ $(document).ready(function(){
 
     });
 
+    $(".content-container, .image_list_container").on('change', '.isActive', function(){ // bu istek content-container veya image_list_container'dan geliyorsa on metodu uygula ve change metodunu dinle isActive için
+
+      var $data = $(this).prop("checked");
+      var $data_url = $(this).data("url");
+
+      if(typeof $data !== "undefined" && typeof $data_url !== "undefined"){
+        
+        $.post($data_url, {data: $data}, function(response){ // jquery'nin post metodu içerisine varsayılan olarak 3 tane parametre alır(url, obje türüdne bir nesne(input name'i), callback function(handle edicek fonksiyon. Mesela $data_url'den gelecek cevap(echo $id)))
+                     
+        });
+
+      }
+
+    });
+
+    // isCover elementi için image_list_container içerisinde on metodu uygula ve change'i dinle
+    $(".image_list_container").on("change", ".isCover", function(){
+
+      var $data = $(this).prop("checked");
+      var $data_url = $(this).data("url");
+
+      if(typeof $data !== "undefined" && typeof $data_url !== "undefined"){
+        
+        $.post($data_url, {data: $data}, function(response){ // jquery'nin post metodu içerisine varsayılan olarak 3 tane parametre alır(url, obje türüdne bir nesne(input name'i), callback function(handle edicek fonksiyon. Mesela $data_url'den gelecek cevap(echo $id)))
+                     
+        $(".image_list_container").html(response);
+
+        $('[data-switchery]').each(function(){
+          var $this = $(this),
+              color = $this.attr('data-color') || '#188ae2',
+              jackColor = $this.attr('data-jackColor') || '#ffffff',
+              size = $this.attr('data-size') || 'default'
+  
+          new Switchery(this, {
+            color: color,
+            size: size,
+            jackColor: jackColor
+          });
+        });
+
+        });
+
+      }
+
+    });
+
     $(".sortable").on("sortupdate", function(event, ui){
       
       var $data = $(this).sortable("serialize");

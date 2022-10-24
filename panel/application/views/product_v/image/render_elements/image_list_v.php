@@ -3,7 +3,7 @@
         <p>Burada herhangi bir kayıt bulunamadı.</a></p>
     </div>
 <?php } else{ ?>
-    <table class="table table-bordered table-striped table-hover">
+    <table class="table table-bordered table-striped table-hover content-container">
         <thead>
             <th>#id</th>
             <th>Görsel</th>
@@ -20,24 +20,24 @@
                     <td><?php echo $image->img_url; ?></td>
                     <td class="w100 text-center">
                         <input
-                        data-url="<?php echo base_url("product/isActiveSetter/") ?>"
+                        data-url="<?php echo base_url("product/imageIsActiveSetter/$image->id") ?>"
                         class="isActive" 
                         id="switch-2-2" 
                         type="checkbox"
                         data-switchery
                         data-color="#10c469"
-                        <?php echo ($image->id) ? "checked" : ""; ?>
+                        <?php echo ($image->isActive) ? "checked" : ""; ?>
                     />
                     </td>
                     <td class="w100 text-center">
                         <input
-                        data-url="<?php echo base_url("product/isActiveSetter/") ?>"
-                        class="isActive" 
+                        data-url="<?php echo base_url("product/isCoverSetter/$image->id/$image->product_id"); ?>"
+                        class="isCover" 
                         id="switch-2-2" 
                         type="checkbox"
                         data-switchery
                         data-color="#ff5b5b"
-                        <?php echo ($image->id) ? "checked" : ""; ?>
+                        <?php echo ($image->isCover) ? "checked" : ""; ?>
                     />
                     </td>
                     <td class="w100 text-center">

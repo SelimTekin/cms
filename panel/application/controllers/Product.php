@@ -45,7 +45,7 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
     public function save(){
 
         $this->load->library("form_validation");
-        
+
         // Kurallar yazilir
         $this->form_validation->set_rules("title", "Başlık", "required|trim"); # input'un name'i, kural'ın(rule) ismi, kurallar (trim başındaki ve sonundaki boşlukları kontrol eder)
 
@@ -70,7 +70,7 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
                     "title"       => $this->input->post("title"),
                     "description" => $this->input->post("description"),
                     "url"         => convertToSEO($this->input->post("title")),
-                    "rank"        => 0, 
+                    "rank"        => 0,
                     "isActive"    => 1,
                     "createdAt"   => date("Y-m-d H:i:s") # yıl-ay-gun saat:dakika:saniye
                 )
@@ -120,7 +120,7 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
     public function update($id){
 
         $this->load->library("form_validation");
-        
+
         // Kurallar yazilir
         $this->form_validation->set_rules("title", "Başlık", "required|trim"); # input'un name'i, kural'ın(rule) ismi, kurallar (trim başındaki ve sonundaki boşlukları kontrol eder)
 
@@ -197,9 +197,9 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
     }
 
     public function isActiveSetter($id){
-        
+
         if($id){
-            
+
             $isActive = ($this->input->post("data") === "true") ? 1 : 0;
 
             $this->product_model->update( # update 2 tane parametre alır where,data
@@ -216,12 +216,84 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
 
     }
 
+    public function imageIsActiveSetter($id){
+
+        if($id){
+
+            $isActive = ($this->input->post("data") === "true") ? 1 : 0;
+
+            $this->product_image_model->update( # update 2 tane parametre alır where,data
+                array(
+                    "id"    => $id,
+                ),
+
+                array(
+                    "isActive"  => $isActive,
+                )
+                );
+
+        }
+
+    }
+
+    public function isCoverSetter($id, $parent_id){
+
+        if($id){
+
+            $isCover = ($this->input->post("data") === "true") ? 1 : 0;
+
+            // Kapak yapılmak istenen kayıt
+            $this->product_image_model->update( # update 2 tane parametre alır where,data
+                array(
+                    "id"            => $id,
+                    "product_id"    => $parent_id
+                ),
+
+                array(
+                    "isCover"  => $isCover,
+                )
+            );
+
+            // Kapak yapılmayan diğer kayıtlar
+            $this->product_image_model->update( # update 2 tane parametre alır where,data
+                array(
+                    "id !="      => $id,
+                    "product_id" => $parent_id
+                ),
+
+                array(
+                    // Kapak fotoğrafı olarak seçilmeyenleri 0 yapıyoruz
+                    // "isCover"       => ($isCover) ? 0 : 0, # her halükarda 0 yap (o yüzden direkt 0 yazmak daha mantıklı)
+                    "isCover"   => 0,
+                )
+            );
+
+            $viewData = new stdClass();
+
+            // view'e gönderilecek değişkenlerin set edilmesi
+            $viewData->viewFolder = $this->viewFolder;
+            $viewData->subViewFolder = "image";
+
+            $viewData->item_images = $this->product_image_model->get_all( # view'e gönderebilmek için $viewData'nın bir property'si -attribute'ı- olarak tanımladık
+                array(
+                    "product_id"    => $parent_id
+                )
+            );
+
+            # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
+            $render_html = $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/render_elements/image_list_v", $viewData, true); # true olursa sayfada görünmez bu değişken içinde saklanır(echo $render_html ile ekranda görebiliriz). Buna render page deniyor
+            echo $render_html;
+
+        }
+
+    }
+
     public function rankSetter(){
 
         $data = $this->input->post("data");
 
         parse_str($data, $order); # data'dan gelenleri order isimli değişkene aktar (data bir array ve &'leri patlatarak parse eder yani diziye aktarır)
-        
+
         $items = $order["ord"];
 
         foreach($items as $rank => $id){ # rank->key, id->value ( Array( [0] => 6)) rank = 0, id = 6
@@ -230,7 +302,7 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
                     "id"        => $id,
                     "rank !="   => $rank # sırası değiştirilen verinin altında kalanları değiştirmemek için. Yani konumu zaten değişmemişse bunu hiç değiştirme
                 ),
-                
+
                 array(
                     "rank"      => $rank
                 )
@@ -267,7 +339,7 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
     public function image_upload($id){
 
         $file_name = convertToSEO(pathinfo($_FILES["file"]["name"], PATHINFO_FILENAME)) . "." . pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION);
-        
+
         # uzantı ve dosya ismini ayrı ayrı almak istersek aşağıda yazıyor
         // $ext = pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION); # uzantıyı aldık
         // $file_name = convertToSEO(pathinfo($_FILES["file"]["name"], PATHINFO_FILENAME)); # dosya ismini uzantısız aldık
@@ -277,7 +349,7 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
         $config["allowed_types"] = "jpg|jpeg|png"; # hangi türde dosyayı yükleyeceğimiz(yazarken aralarda boşluk bırakmadan yaz)
         $config["upload_path"] = "uploads/$this->viewFolder/"; # Dosyalar nereye yüklencek
         $config["file_name"] = $file_name;
-        
+
         # upload sınıfını yüklerken nasıl yüklemek istediğimizi ya da ne şartlarda ya da nereye yükleyeceğizmizi belirttik $config ile
         $this->load->library("upload", $config);
 
@@ -285,7 +357,7 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
         $upload = $this->upload->do_upload("file"); # Neyi upload edeceğini dropzone'dan kaynaklı varsayılan olarak ismi(name) file olarak geliyor
 
         if($upload){
-            
+
             # upload edilen dosya ile ilgili bilgilerin arasındaki ismini alabiliriz. data dediğimiz zaman array döndürür
             $uploaded_file = $this->upload->data("file_name");
 

@@ -77,11 +77,32 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
             );
 
             if($insert){
-                redirect(base_url("product"));
+
+                $alert = array(
+                    "title"  => "İşlem Başarılı",
+                    "text"   => "Kayıt başarılı bir şekilde eklendi",
+                    "type"   => "success"
+                );
+
             }
             else{
-                redirect(base_url("product"));
+
+                $alert = array(
+                    "title"  => "İşlem Başarısız",
+                    "text"   => "Kayıt ekleme sırasında bir problem oluştu",
+                    "type"   => "error"
+                );
+
             }
+
+            # İşlemin Sonucunu Session'a yazma işlemi...
+            # session'a bir şey eklediğin zaman session'dan onu kaldırmadığın sürece session'da kalacaktır.
+            # set_flashdata() ise bir kere set edilecek bir sonraki sayfa yenilenmesinde kendi kendine otoamtik şekilde kaldırılıyor codeigniter tarafından. 
+            $this->session->set_flashdata("alert", $alert); # alert isimli bir indisim var ve bu alert isimli indisimin değeri $alert değişkeninden gelecek
+
+            # if'in içinde değil de burada redirect etmemizin sebebi alert'e verileri gönderebilmek. if'in içinde oslaydı session satırına ulaşamadan sayfa redirect edilecekti.
+            redirect(base_url("product"));
+
         }
         else{
             // Hata varsa yani input doldurulmamışsa mesela, sayfa yeniden yüklenecek
@@ -152,11 +173,21 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
             );
 
             if($update){
-                redirect(base_url("product"));
+                $alert = array(
+                    "title"  => "İşlem Başarılı",
+                    "text"   => "Kayıt başarılı bir şekilde güncellendi",
+                    "type"   => "success"
+                );
             }
             else{
-                redirect(base_url("product"));
+                $alert = array(
+                    "title"  => "İşlem Başarısız",
+                    "text"   => "Güncelleme sırasında bir problem oluştu",
+                    "type"   => "success"
+                );
             }
+            $this->session->set_flashdata("alert", $alert);
+            redirect(base_url("product"));
         }
         else{
             // Hata varsa yani input doldurulmamışsa mesela, sayfa yeniden yüklenecek
@@ -187,12 +218,50 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
             )
         );
 
+        $delete = $this->product_image_model->delete(
+            array(
+                "product_id"    => $id
+            )
+        );
+
         // TODO ALert Sistemi Eklenecek...
         if($delete){
-            redirect(base_url("product"));
+            $alert = array(
+                "title"  => "İşlem Başarılı",
+                "text"   => "Kayıt başarılı bir şekilde silindi",
+                "type"   => "success"
+            );
         }
         else{
-            redirect(base_url("product"));
+            $alert = array(
+                "title"  => "İşlem Başarısız",
+                "text"   => "Kayıt silme sırasında bir problem oluştu",
+                "type"   => "success"
+            );
+        }
+        $this->session->set_flashdata("alert", $alert);
+        redirect(base_url("product"));
+    }
+
+    public function imageDelete($id, $parent_id){
+
+        $fileName = getFileName($id);
+
+        $delete = $this->product_image_model->delete(
+            array(
+                "id"    => $id,
+            )
+        );
+
+        // TODO ALert Sistemi Eklenecek...
+        if($delete){
+
+            unlink("uploads/{$this->viewFolder}/$fileName"); # bir dosyayı belirli bir yoldan silmek için bu komut kullanılır. (Mesela uploads klasörü altından fotoğraf kaldırmak için kullandık)
+
+            redirect(base_url("product/image_form/$parent_id"));
+        }
+        else{
+            redirect(base_url("product/image_form/$parent_id"));
         }
     }
 
@@ -277,7 +346,8 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
             $viewData->item_images = $this->product_image_model->get_all( # view'e gönderebilmek için $viewData'nın bir property'si -attribute'ı- olarak tanımladık
                 array(
                     "product_id"    => $parent_id
-                )
+                ),"rank ASC"
+                
             );
 
             # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
@@ -311,6 +381,29 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
 
     }
 
+    public function imageRankSetter(){
+
+        $data = $this->input->post("data");
+
+        parse_str($data, $order); # data'dan gelenleri order isimli değişkene aktar (data bir array ve &'leri patlatarak parse eder yani diziye aktarır)
+
+        $items = $order["ord"];
+
+        foreach($items as $rank => $id){ # rank->key, id->value ( Array( [0] => 6)) rank = 0, id = 6
+            $this->product_image_model->update(
+                array(
+                    "id"        => $id,
+                    "rank !="   => $rank # sırası değiştirilen verinin altında kalanları değiştirmemek için. Yani konumu zaten değişmemişse bunu hiç değiştirme
+                ),
+
+                array(
+                    "rank"      => $rank
+                )
+            );
+        }
+
+    }
+
     public function image_form($id){
 
         $viewData = new stdClass();
@@ -328,7 +421,8 @@ class Product extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebeb
         $viewData->item_images = $this->product_image_model->get_all( # view'e gönderebilmek için $viewData'nın bir property'si -attribute'ı- olarak tanımladık
             array(
                 "product_id"    => $id
-            )
+            ),"rank ASC"
+            
         );
 
         # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim

@@ -13,10 +13,10 @@
                     <p>Burada herhangi bir kayıt bulunamadı. Eklemek için lütfen <a href="<?php echo base_url("product/new_form"); # product controller'ı altındaki new_form metdou çağır ?>">tıklayınız.</a></p>
                 </div>
             <?php } else{ ?>
-                <table class="table table-hover table-striped">
+                <table class="table table-hover table-striped table-bordered content-container">
                     <thead>
-                        <th><i class="fa fa-reorder"></i></th>
-                        <th>#id</th>
+                        <th class="order"><i class="fa fa-reorder"></i></th>
+                        <th class="w50">#id</th>
                         <th>Url</th>
                         <th>Başlık</th>
                         <th>Açıklama</th>
@@ -26,8 +26,8 @@
                     <tbody class="sortable" data-url="<?php echo base_url("product/rankSetter");?>">
                         <?php foreach($items as $item){ ?>
                             <tr id="ord-<?php echo $item->id; ?>">
-                                <td><i class="fa fa-reorder"></i></td>
-                                <td>#<?php echo $item->id; ?></td>
+                                <td class="order"><i class="fa fa-reorder"></i></td>
+                                <td class="w50 text-center">#<?php echo $item->id; ?></td>
                                 <td><?php echo $item->url; ?></td>
                                 <td><?php echo $item->title; ?></td>
                                 <td><?php echo $item->description; ?></td>

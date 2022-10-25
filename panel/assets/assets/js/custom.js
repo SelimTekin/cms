@@ -1,8 +1,8 @@
 $(document).ready(function(){
-
+  
     $(".sortable").sortable();
 
-    $(".remove-btn").click(function(){
+    $(".content-container, .image_list_container").on("click", ".remove-btn", function(){
 
         var $data_url = $(this).data("url"); // başında data- olan attributeleri keywordleri buluyor
 
@@ -44,7 +44,7 @@ $(document).ready(function(){
 
       if(typeof $data !== "undefined" && typeof $data_url !== "undefined"){
         
-        $.post($data_url, {data: $data}, function(response){ // jquery'nin post metodu içerisine varsayılan olarak 3 tane parametre alır(url, obje türüdne bir nesne(input name'i), callback function(handle edicek fonksiyon. Mesela $data_url'den gelecek cevap(echo $id)))
+        $.post($data_url, {data: $data}, function(response){ // jquery'nin post metodu içerisine varsayılan olarak 3 tane parametre alır(url, obje türünde bir nesne(input name'i), callback function(handle edicek fonksiyon. Mesela $data_url'den gelecek cevap(echo $id)))
                      
         });
 
@@ -75,7 +75,10 @@ $(document).ready(function(){
             size: size,
             jackColor: jackColor
           });
+
         });
+
+        $(".sortable").sortable();
 
         });
 
@@ -83,14 +86,15 @@ $(document).ready(function(){
 
     });
 
-    $(".sortable").on("sortupdate", function(event, ui){
+    $(".content-container, .image_list_container").on("sortupdate", ".sortable", function(event, ui){
       
       var $data = $(this).sortable("serialize");
-      var $data_url = $(this).data("url")
+      var $data_url = $(this).data("url");
       
       $.post($data_url, {data: $data}, function(response){})
 
     });
+
 
     var uploadSection = Dropzone.forElement("#dropzone"); // Dropzone plugin'ini kullanarak forElement metdouyla id'si dropzone olan elementin instance'ını uploadSection değişkeni altında kullanma
 
@@ -114,6 +118,8 @@ $(document).ready(function(){
             jackColor: jackColor
           });
         });
+
+        $(".sortable").sortable();
 
       })
 

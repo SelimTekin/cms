@@ -11,7 +11,6 @@ class News extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebebi b
 
         // construct'ın altında tanımlıyoruz yoksa load isimli metodu tanımaz
         $this->load->model("news_model");
-        $this->load->model("product_image_model");
     }
 
     public function index(){

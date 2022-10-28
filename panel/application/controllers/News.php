@@ -237,6 +237,16 @@ class News extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebebi b
 
         $this->load->library("form_validation");
 
+        $news_type = $this->input->post("news_type");
+
+        if($news_type == "video"){
+
+            $this->form_validation->set_rules("video_url", "Video URL", "required|trim");
+
+        }
+
+        $this->load->library("form_validation");
+
         // Kurallar yazilir
         $this->form_validation->set_rules("title", "Başlık", "required|trim"); # input'un name'i, kural'ın(rule) ismi, kurallar (trim başındaki ve sonundaki boşlukları kontrol eder)
 
@@ -256,50 +266,131 @@ class News extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebebi b
             // Hata ekranda gosterilir...
 
         if($validate){
-            $update = $this->news_model->update(
-                array(
-                    "id"          =>$id,
-                ),
-                array(
+
+            // Upload Süreci...
+            if($news_type == "image"){
+
+                if($_FILES["img_url"]["name"] !== ""){
+
+                    // content dosyasındaki görsel inputunun name'i img_url olduğu için img_url yazdık. Yoksa dropzone'da file olarak gönderiliyordu.
+                    $file_name = convertToSEO(pathinfo($_FILES["img_url"]["name"], PATHINFO_FILENAME)) . "." . pathinfo($_FILES["img_url"]["name"], PATHINFO_EXTENSION);
+
+                    # uzantı ve dosya ismini ayrı ayrı almak istersek aşağıda yazıyor
+                    // $ext = pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION); # uzantıyı aldık
+                    // $file_name = convertToSEO(pathinfo($_FILES["file"]["name"], PATHINFO_FILENAME)); # dosya ismini uzantısız aldık
+
+                    // Bunlar ayar( konfigürasyon(config) ) oluyor
+                    // $config["allowed_types"] = "*"; # bütün tipler veya
+                    $config["allowed_types"] = "jpg|jpeg|png"; # hangi türde dosyayı yükleyeceğimiz(yazarken aralarda boşluk bırakmadan yaz)
+                    $config["upload_path"] = "uploads/$this->viewFolder/"; # Dosyalar nereye yüklencek
+                    $config["file_name"] = $file_name;
+
+                    # upload sınıfını yüklerken nasıl yüklemek istediğimizi ya da ne şartlarda ya da nereye yükleyeceğizmizi belirttik $config ile
+                    $this->load->library("upload", $config);
+
+                    // upload sınıfındaki do_upload metodunu kullanarak bu işlemi(upload işlemini) gerçekleştirme
+                    $upload = $this->upload->do_upload("img_url"); # Bizim inputumuzun name'i img_url olduğu için img_url yazdık.Neyi upload edeceğini dropzone'dan kaynaklı varsayılan olarak ismi(name) file olarak geliyor.
+
+                    if($upload){
+
+                        # upload edilen dosya ile ilgili bilgilerin arasındaki ismini alabiliriz. data dediğimiz zaman array döndürür
+                        $uploaded_file = $this->upload->data("file_name");
+
+                        $data = array(
+                                "title"       => $this->input->post("title"),
+                                "description" => $this->input->post("description"),
+                                "url"         => convertToSEO($this->input->post("title")),
+                                "news_type"   => $news_type,
+                                "img_url"   => $uploaded_file,
+                                "video_url"   => "#", // video_url olmadığı için # yazdık. (Hiçbir veri olmadığını anlamak için)
+                            );
+
+                    }
+                    else{
+
+                        $alert = array(
+                            "title"  => "İşlem Başarısız",
+                            "text"   => "Görsel yüklenirken bir problem oluştu",
+                            "type"   => "error"
+                        );
+
+                        $this->session->set_flashdata("alert", $alert);
+
+                        redirect(base_url("news/update_form/$id"));
+
+                        die();
+
+                    }
+                }
+                else{
+
+                    $data = array(
+                        "title"       => $this->input->post("title"),
+                        "description" => $this->input->post("description"),
+                        "url"         => convertToSEO($this->input->post("title")),
+                    );
+
+                }
+            }
+            else if($news_type == "video"){
+
+                $data = array(
                     "title"       => $this->input->post("title"),
                     "description" => $this->input->post("description"),
                     "url"         => convertToSEO($this->input->post("title")),
-                )
-            );
+                    "news_type"   => $news_type,
+                    "img_url"   => "#", // image_url olmadığı için # yazdık. (Hiçbir veri olmadığını anlamak için)
+                    "video_url"   => $this->input->post("video_url"),
+                );
+
+            }
+
+            $update = $this->news_model->update(array("id" => $id), $data);
 
             if($update){
+
                 $alert = array(
-                    "title"  => "İşlem Başarılı",
+                    "title"  => "Güncelleme Başarılı",
                     "text"   => "Kayıt başarılı bir şekilde güncellendi",
                     "type"   => "success"
                 );
+
             }
             else{
+
                 $alert = array(
-                    "title"  => "İşlem Başarısız",
-                    "text"   => "Güncelleme sırasında bir problem oluştu",
-                    "type"   => "success"
+                    "title"  => "Güncelleme Başarısız",
+                    "text"   => "Kayıt Güncelleme sırasında bir problem oluştu",
+                    "type"   => "error"
                 );
+
             }
-            $this->session->set_flashdata("alert", $alert);
-            redirect(base_url("product"));
+
+            # İşlemin Sonucunu Session'a yazma işlemi...
+            # session'a bir şey eklediğin zaman session'dan onu kaldırmadığın sürece session'da kalacaktır.
+            # set_flashdata() ise bir kere set edilecek bir sonraki sayfa yenilenmesinde kendi kendine otoamtik şekilde kaldırılıyor codeigniter tarafından. 
+            $this->session->set_flashdata("alert", $alert); # alert isimli bir indisim var ve bu alert isimli indisimin değeri $alert değişkeninden gelecek
+
+            # if'in içinde değil de burada redirect etmemizin sebebi alert'e verileri gönderebilmek. if'in içinde oslaydı session satırına ulaşamadan sayfa redirect edilecekti.
+            redirect(base_url("news"));
+
         }
         else{
             // Hata varsa yani input doldurulmamışsa mesela, sayfa yeniden yüklenecek
             $viewData = new stdClass();
 
-            // Tablodan verilerin getirilmesi
-            $item = $this->news_model->get(
-                array(
-                    "id" => $id,
-                )
-            );
-
             // view'e gönderilecek değişkenlerin set edilmesi
             $viewData->viewFolder = $this->viewFolder;
             $viewData->subViewFolder = "update";
             $viewData->form_error = true;
-            $viewData->item = $item;
+            $viewData->news_type = $news_type;
+
+            // Tablodan verilerin getirilmesi
+            $viewData->item = $this->news_model->get(
+                array(
+                    "id" => $id,
+                )
+            );            
 
             # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
             $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);

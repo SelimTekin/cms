@@ -87,7 +87,7 @@
         </li>
 
         <li>
-          <a href="<?php echo base_url("product"); ?>"> <!--Ürünlere tıklandığında controller altındaki product'ın index metdounu çağırır-->
+          <a href="<?php echo base_url("product"); ?>"> <!--Ürünlere tıklandığında controller altındaki product'ın index metdounu çağırır. O da listelemeyi getirecek-->
           <i class="menu-icon fa fa-cubes"></i>
             <span class="menu-text">Ürünler</span>
           </a>
@@ -101,7 +101,7 @@
         </li>
 
         <li>
-          <a href="javascript:void(0)">
+          <a href="<?php echo base_url("courses"); ?>">
           <i class="menu-icon fa fa-calendar"></i>
             <span class="menu-text">Eğitimler</span>
           </a>

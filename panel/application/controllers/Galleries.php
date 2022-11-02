@@ -302,7 +302,7 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
 
         if($gallery){
 
-            if($gallery->gallery_type != "video"){
+            if($gallery->gallery_type != "video3"){
 
                 if($gallery->gallery_type == "image")
                     $path = "uploads/$this->viewFolder/images/$gallery->folder_name";

@@ -29,10 +29,10 @@
                             <tr id="ord-<?php echo $item->id; ?>">
                                 <td class="order"><i class="fa fa-reorder"></i></td>
                                 <td class="w50 text-center">#<?php echo $item->id; ?></td>
-                                <td><?php echo $item->title; ?></td>
-                                <td><?php echo $item->gallery_type; ?></td>
-                                <td><?php echo $item->folder_name; ?></td>
-                                <td><?php echo $item->url; ?></td>
+                                <td class="text-center"><?php echo $item->title; ?></td>
+                                <td class="text-center"><?php echo $item->gallery_type; ?></td>
+                                <td class="text-center"><?php echo $item->folder_name; ?></td>
+                                <td class="text-center"><?php echo $item->url; ?></td>
                                 <td class="text-center">
                                         <input
                                             data-url="<?php echo base_url("galleries/isActiveSetter/$item->id") ?>"
@@ -50,8 +50,21 @@
                                         class="btn btn-sm btn-danger btn-outline remove-btn">
                                         <i class="fa fa-trash"></i> Sil
                                     </button>
+                                    <?php 
+                                    
+                                        if($item->gallery_type == "image"){
+                                            $button_icon = "fa-image";
+                                        }
+                                        else if($item->gallery_type == "video"){
+                                            $button_icon = "fa-play-circle";
+                                        }
+                                        else{
+                                            $button_icon = "fa-folder";
+                                        }
+
+                                    ?>
                                     <a href="<?php echo base_url("galleries/update_form/$item->id"); # id'yi parametre olarak verdik ?>" class="btn btn-sm btn-info btn-outline"><i class="fa fa-pencil-square-o"></i> Düzenle</a>
-                                    <a href="<?php echo base_url("galleries/image_form/$item->id"); # id'yi parametre olarak verdik ?>" class="btn btn-sm btn-dark btn-outline"><i class="fa fa-image"></i> Resimler</a>
+                                    <a href="<?php echo base_url("galleries/upload_form/$item->id"); # id'yi parametre olarak verdik ?>" class="btn btn-sm btn-dark btn-outline"><i class="fa <?php echo $button_icon; ?>"></i> Galeriye Göz At</a>
                                 </td>
                             </tr>
                         <?php } ?>

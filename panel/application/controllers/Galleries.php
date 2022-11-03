@@ -302,7 +302,7 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
 
         if($gallery){
 
-            if($gallery->gallery_type != "video3"){
+            if($gallery->gallery_type != "video"){
 
                 if($gallery->gallery_type == "image")
                     $path = "uploads/$this->viewFolder/images/$gallery->folder_name";
@@ -518,33 +518,54 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
 
     }
 
-    public function image_form($id){
+    public function upload_form($id){
 
         $viewData = new stdClass();
 
-        // view'e gönderilecek değişkenlerin set edilmesi
+        /** View'e gönderilecek Değişkenlerin Set Edilmesi.. */
         $viewData->viewFolder = $this->viewFolder;
         $viewData->subViewFolder = "image";
 
-        $viewData->item = $this->gallery_model->get(
+        $item = $this->gallery_model->get(
             array(
-                "id"    => $id,
+                "id"    => $id
             )
         );
 
-        $viewData->item_images = $this->product_image_model->get_all( # view'e gönderebilmek için $viewData'nın bir property'si -attribute'ı- olarak tanımladık
-            array(
-                "product_id"    => $id
-            ),"rank ASC"
-            
-        );
+        $viewData->item = $item;
 
-        # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
+        if($item->gallery_type == "image"){
+
+            $viewData->items = $this->image_model->get_all(
+                array(
+                    "gallery_id"    => $id
+                ), "rank ASC"
+            );
+
+        }
+        else if($item->gallery_type == "file"){
+
+            $viewData->items = $this->file_model->get_all(
+                array(
+                    "gallery_id"    => $id
+                ), "rank ASC"
+            );
+
+        }
+        else{
+
+            $viewData->items = $this->video_model->get_all(
+                array(
+                    "gallery_id"    => $id
+                ), "rank ASC"
+            );
+
+        }
+
         $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
-
     }
 
-    public function image_upload($id){
+    public function file_upload($gallery_id, $gallery_type, $folderName){
 
         $file_name = convertToSEO(pathinfo($_FILES["file"]["name"], PATHINFO_FILENAME)) . "." . pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION);
 
@@ -555,7 +576,7 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
         // Bunlar ayar( konfigürasyon(config) ) oluyor
         // $config["allowed_types"] = "*"; # bütün tipler veya
         $config["allowed_types"] = "jpg|jpeg|png"; # hangi türde dosyayı yükleyeceğimiz(yazarken aralarda boşluk bırakmadan yaz)
-        $config["upload_path"] = "uploads/$this->viewFolder/"; # Dosyalar nereye yüklencek
+        $config["upload_path"] = ($gallery_type == "image") ? "uploads/$this->viewFolder/images/$folderName" : "uploads/$this->viewFolder/files/$folderName"; # Dosyalar nereye yüklencek
         $config["file_name"] = $file_name;
 
         # upload sınıfını yüklerken nasıl yüklemek istediğimizi ya da ne şartlarda ya da nereye yükleyeceğizmizi belirttik $config ile
@@ -569,14 +590,15 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
             # upload edilen dosya ile ilgili bilgilerin arasındaki ismini alabiliriz. data dediğimiz zaman array döndürür
             $uploaded_file = $this->upload->data("file_name");
 
-            $this->product_image_model->add(
+            $modelName = ($gallery_type == "image") ? "image_model" : "file_model";
+
+            $this->$modelName->add(
                 array(
-                    "img_url"       => $uploaded_file,
+                    "url"       => "{$config['upload_path']}$uploaded_file",
                     "rank"          => 0,
                     "isActive"      => 1,
-                    "isCover"       => 0,
                     "createdAt"     => date("Y-m-d H:i:s"),
-                    "product_id"    => $id
+                    "gallery_id"    => $gallery_id
                 )
             );
 
@@ -587,7 +609,7 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
 
     }
 
-    public function refresh_image_list($id){
+    public function refresh_file_list($id){
 
         $viewData = new stdClass();
 

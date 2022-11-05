@@ -357,11 +357,19 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
 
     }
 
-    public function imageDelete($id, $parent_id){
+    public function fileDelete($id, $parent_id, $gallery_type){
 
-        $fileName = getFileName($id);
+        $modelName = ($gallery_type == "image") ? "image_model" : "file_model";
 
-        $delete = $this->product_image_model->delete(
+        // $fileName = getFileName($id); # helpers klasörü altındaki tools_helper'da yazdığım fonksiyon (Bir şey değiştirmek için oraya git)
+
+        $fileName = $this->$modelName->get(
+            array(
+                "id"    => $id
+            )
+        );
+
+        $delete = $this->$modelName->delete(
             array(
                 "id"    => $id,
             )
@@ -370,12 +378,13 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
         // TODO ALert Sistemi Eklenecek...
         if($delete){
 
-            unlink("uploads/{$this->viewFolder}/$fileName"); # bir dosyayı belirli bir yoldan silmek için bu komut kullanılır. (Mesela uploads klasörü altından fotoğraf kaldırmak için kullandık)
+            # Bir dosyayı belirli bir yoldan silmek için bu komut kullanılır. Aynı zamanda sunucudan da silmiş oluyoruz.(Mesela uploads klasörü altından fotoğraf kaldırmak için kullandık)
+            unlink($fileName->url); 
 
-            redirect(base_url("product/image_form/$parent_id"));
+            redirect(base_url("galleries/upload_form/$parent_id"));
         }
         else{
-            redirect(base_url("product/image_form/$parent_id"));
+            redirect(base_url("galleries/upload_form/$parent_id"));
         }
     }
 
@@ -399,13 +408,15 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
 
     }
 
-    public function imageIsActiveSetter($id){
+    public function fileIsActiveSetter($id, $gallery_type){
 
-        if($id){
+        if($id && $gallery_type){
+
+            $modelName = ($gallery_type == "image") ? "image_model" : "file_model";
 
             $isActive = ($this->input->post("data") === "true") ? 1 : 0;
 
-            $this->product_image_model->update( # update 2 tane parametre alır where,data
+            $this->$modelName->update( # update 2 tane parametre alır where,data
                 array(
                     "id"    => $id,
                 ),
@@ -419,60 +430,7 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
 
     }
 
-    public function isCoverSetter($id, $parent_id){
-
-        if($id){
-
-            $isCover = ($this->input->post("data") === "true") ? 1 : 0;
-
-            // Kapak yapılmak istenen kayıt
-            $this->product_image_model->update( # update 2 tane parametre alır where,data
-                array(
-                    "id"            => $id,
-                    "product_id"    => $parent_id
-                ),
-
-                array(
-                    "isCover"  => $isCover,
-                )
-            );
-
-            // Kapak yapılmayan diğer kayıtlar
-            $this->product_image_model->update( # update 2 tane parametre alır where,data
-                array(
-                    "id !="      => $id,
-                    "product_id" => $parent_id
-                ),
-
-                array(
-                    // Kapak fotoğrafı olarak seçilmeyenleri 0 yapıyoruz
-                    // "isCover"       => ($isCover) ? 0 : 0, # her halükarda 0 yap (o yüzden direkt 0 yazmak daha mantıklı)
-                    "isCover"   => 0,
-                )
-            );
-
-            $viewData = new stdClass();
-
-            // view'e gönderilecek değişkenlerin set edilmesi
-            $viewData->viewFolder = $this->viewFolder;
-            $viewData->subViewFolder = "image";
-
-            $viewData->item_images = $this->product_image_model->get_all( # view'e gönderebilmek için $viewData'nın bir property'si -attribute'ı- olarak tanımladık
-                array(
-                    "product_id"    => $parent_id
-                ),"rank ASC"
-                
-            );
-
-            # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
-            $render_html = $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/render_elements/image_list_v", $viewData, true); # true olursa sayfada görünmez bu değişken içinde saklanır(echo $render_html ile ekranda görebiliriz). Buna render page deniyor
-            echo $render_html;
-
-        }
-
-    }
-
-    public function rankSetter(){
+    public function fileRankSetter($gallery_type){
 
         $data = $this->input->post("data");
 
@@ -480,8 +438,10 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
 
         $items = $order["ord"];
 
+        $modelName = ($gallery_type == "image") ? "image_model" : "file_model";
+
         foreach($items as $rank => $id){ # rank->key, id->value ( Array( [0] => 6)) rank = 0, id = 6
-            $this->gallery_model->update(
+            $this->$modelName->update(
                 array(
                     "id"        => $id,
                     "rank !="   => $rank # sırası değiştirilen verinin altında kalanları değiştirmemek için. Yani konumu zaten değişmemişse bunu hiç değiştirme
@@ -495,16 +455,16 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
 
     }
 
-    public function imageRankSetter(){
+    public function rankSetter(){
 
         $data = $this->input->post("data");
 
-        parse_str($data, $order); # data'dan gelenleri order isimli değişkene aktar (data bir array ve &'leri patlatarak parse eder yani diziye aktarır)
+        parse_str($data, $order); # data'dan gelenleri order isimli değişkene aktar (data bir array ve &'ları patlatarak parse eder yani diziye aktarır)
 
         $items = $order["ord"];
 
         foreach($items as $rank => $id){ # rank->key, id->value ( Array( [0] => 6)) rank = 0, id = 6
-            $this->product_image_model->update(
+            $this->gallery_model->update(
                 array(
                     "id"        => $id,
                     "rank !="   => $rank # sırası değiştirilen verinin altında kalanları değiştirmemek için. Yani konumu zaten değişmemişse bunu hiç değiştirme
@@ -562,6 +522,7 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
 
         }
 
+        $viewData->gallery_type = $item->gallery_type;
         $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
     }
 
@@ -575,7 +536,8 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
 
         // Bunlar ayar( konfigürasyon(config) ) oluyor
         // $config["allowed_types"] = "*"; # bütün tipler veya
-        $config["allowed_types"] = "jpg|jpeg|png"; # hangi türde dosyayı yükleyeceğimiz(yazarken aralarda boşluk bırakmadan yaz)
+        $config["allowed_types"] = "jpg|jpeg|png|pdf|doc|docx"; # hangi türde dosyayı yükleyeceğimiz(yazarken aralarda boşluk bırakmadan yaz)
+        // $config["allowed_types"] = "jpg|jpeg|png|pdf|doc|docx"; // * -> bütün dosya türlerini temsil eder
         $config["upload_path"] = ($gallery_type == "image") ? "uploads/$this->viewFolder/images/$folderName" : "uploads/$this->viewFolder/files/$folderName"; # Dosyalar nereye yüklencek
         $config["file_name"] = $file_name;
 
@@ -594,7 +556,7 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
 
             $this->$modelName->add(
                 array(
-                    "url"       => "{$config['upload_path']}$uploaded_file",
+                    "url"       => "{$config['upload_path']}/$uploaded_file",
                     "rank"          => 0,
                     "isActive"      => 1,
                     "createdAt"     => date("Y-m-d H:i:s"),
@@ -609,7 +571,7 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
 
     }
 
-    public function refresh_file_list($id){
+    public function refresh_file_list($gallery_id, $gallery_type){
 
         $viewData = new stdClass();
 
@@ -617,14 +579,300 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
         $viewData->viewFolder = $this->viewFolder;
         $viewData->subViewFolder = "image";
 
-        $viewData->item_images = $this->product_image_model->get_all( # view'e gönderebilmek için $viewData'nın bir property'si -attribute'ı- olarak tanımladık
+        $modelName = ($gallery_type == "image") ? "image_model" : "file_model";
+
+        $viewData->items = $this->$modelName->get_all( # view'e gönderebilmek için $viewData'nın bir property'si -attribute'ı- olarak tanımladık
             array(
-                "product_id"    => $id
+                "gallery_id"    => $gallery_id
             )
         );
 
+        $viewData->gallery_type = $gallery_type;
+
         # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
-        $render_html = $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/render_elements/image_list_v", $viewData, true); # true olursa sayfada görünmez bu değişken içinde saklanır(echo $render_html ile ekranda görebiliriz). Buna render page deniyor
+        $render_html = $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/render_elements/file_list_v", $viewData, true); # true olursa sayfada görünmez bu değişken içinde saklanır(echo $render_html ile ekranda görebiliriz). Buna render page deniyor
         echo $render_html;
     }
+    
+    public function gallery_video_list($id){
+        $viewData = new stdClass();
+
+        $gallery = $this->gallery_model->get(
+
+            array("id" => $id)
+
+        );
+
+        // Tablodan verilerin getirilmesi
+        $items = $this->video_model->get_all(
+            array(
+                "gallery_id" => $id
+            ), "rank ASC"
+        );
+
+        // View'e gönderilecek değişkenlerin set edilmesi
+        $viewData->viewFolder = $this->viewFolder;
+        $viewData->subViewFolder = "video/list";
+        $viewData->items = $items;
+        $viewData->gallery = $gallery;
+
+        $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData); # viewData içindeki değişkenleri index dosyasında kullanabilmek için (product_v'yi viewFolder adında gönderecek)
+    }
+    
+    public function new_gallery_video_form($id){
+
+        $viewData = new stdClass();
+
+        $viewData->gallery_id = $id; # gallery_id değişkenini view'e gönderebiliyim ki video/add view'inde gallery_id'yi elde edebiliyim
+        // view'e gönderilecek değişkenlerin set edilmesi
+        $viewData->viewFolder = $this->viewFolder;
+        $viewData->subViewFolder = "video/add";
+
+        # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
+        $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
+    }
+    
+    public function gallery_video_save($id){
+
+        $this->load->library("form_validation");
+
+        // Kurallar yazilir
+        $this->form_validation->set_rules("url", "Video URL", "required|trim"); # input'un name'i, kural'ın(rule) ismi, kurallar (trim başındaki ve sonundaki boşlukları kontrol eder)
+
+        $this->form_validation->set_message(
+            array(
+                "required" => "<b>{field}</b> alanı doldurulmalıdır" # field kuralın adına denk geliyor (örneğin yukarıdaki kuralın adı olan "Başlık")
+            )
+        );
+
+        // Form validation calistirilir
+        // TRUE - FALSE
+        $validate = $this->form_validation->run();
+
+        // Basarili ise
+            // Kayit islemi baslar
+        // Basarisiz ise
+            // Hata ekranda gosterilir...
+
+        if($validate){
+
+            $insert = $this->video_model->add(
+                array(
+                    "url"          => $this->input->post("url"),
+                    "gallery_id"  => $id,
+                    "rank"         => 0,
+                    "isActive"     => 1,
+                    "createdAt"    => date("Y-m-d H:i:s") # yıl-ay-gun saat:dakika:saniye
+                )
+            );
+
+            if($insert){
+
+                $alert = array(
+                    "title"  => "İşlem Başarılı",
+                    "text"   => "Kayıt başarılı bir şekilde eklendi",
+                    "type"   => "success"
+                );
+
+            }
+            else{
+
+                $alert = array(
+                    "title"  => "İşlem Başarısız",
+                    "text"   => "Kayıt ekleme sırasında bir problem oluştu",
+                    "type"   => "error"
+                );
+
+            }
+
+            # İşlemin Sonucunu Session'a yazma işlemi...
+            # session'a bir şey eklediğin zaman session'dan onu kaldırmadığın sürece session'da kalacaktır.
+            # set_flashdata() ise bir kere set edilecek bir sonraki sayfa yenilenmesinde kendi kendine otoamtik şekilde kaldırılıyor codeigniter tarafından. 
+            $this->session->set_flashdata("alert", $alert); # alert isimli bir indisim var ve bu alert isimli indisimin değeri $alert değişkeninden gelecek
+
+            # if'in içinde değil de burada redirect etmemizin sebebi alert'e verileri gönderebilmek. if'in içinde oslaydı session satırına ulaşamadan sayfa redirect edilecekti.
+            redirect(base_url("galleries/gallery_video_list/$id"));
+
+        }
+        else{
+            // Hata varsa yani input doldurulmamışsa mesela, sayfa yeniden yüklenecek
+            $viewData = new stdClass();
+
+            // view'e gönderilecek değişkenlerin set edilmesi
+            $viewData->viewFolder = $this->viewFolder;
+            $viewData->subViewFolder = "video/add";
+            $viewData->form_error = true;
+            $viewData->gallery_id = $id;
+
+            # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
+            $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
+        }
+    }
+
+    public function update_gallery_video_form($id){
+
+        $viewData = new stdClass();
+
+        // Tablodan verilerin getirilmesi
+        $item = $this->video_model->get(
+            array(
+                "id" => $id,
+            )
+        );
+
+        // view'e gönderilecek değişkenlerin set edilmesi
+        $viewData->viewFolder = $this->viewFolder;
+        $viewData->subViewFolder = "video/update";
+        $viewData->item = $item;
+
+        # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
+        $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
+
+    }
+
+    public function gallery_video_update($id, $gallery_id){ # varsayılan olarak boşluk koyalım ki($old_folder_name parametresinden bahsediyorum) video olduğu zaman folder_name geleceği için burada bir hata ile karşılaşmayalım
+
+        $this->load->library("form_validation");
+
+        // Kurallar yazilir
+        $this->form_validation->set_rules("url", "Video URL", "required|trim"); # input'un name'i, kural'ın(rule) ismi, kurallar (trim başındaki ve sonundaki boşlukları kontrol eder)
+
+        $this->form_validation->set_message(
+            array(
+                "required" => "<b>{field}</b> alanı doldurulmalıdır" # field kuralın adına denk geliyor (örneğin yukarıdaki kuralın adı olan "Başlık")
+            )
+        );
+
+        // Form validation calistirilir
+        // TRUE - FALSE
+        $validate = $this->form_validation->run();
+
+        // Basarili ise
+            // Kayit islemi baslar
+        // Basarisiz ise
+            // Hata ekranda gosterilir...
+
+        if($validate){
+
+            $update = $this->video_model->update(
+                array(
+                    "id"          =>$id,
+                ),
+                array(
+                    "url"       => $this->input->post("url"),
+                )
+            );
+
+            if($update){
+                $alert = array(
+                    "title"  => "İşlem Başarılı",
+                    "text"   => "Kayıt başarılı bir şekilde güncellendi",
+                    "type"   => "success"
+                );
+            }
+            else{
+                $alert = array(
+                    "title"  => "İşlem Başarısız",
+                    "text"   => "Güncelleme sırasında bir problem oluştu",
+                    "type"   => "success"
+                );
+            }
+            $this->session->set_flashdata("alert", $alert);
+            redirect(base_url("galleries/gallery_video_list/$gallery_id"));
+        }
+        else{
+            // Hata varsa yani input doldurulmamışsa mesela, sayfa yeniden yüklenecek
+            $viewData = new stdClass();
+
+            // Tablodan verilerin getirilmesi
+            $item = $this->gallery_model->get(
+                array(
+                    "id" => $id,
+                )
+            );
+
+            // view'e gönderilecek değişkenlerin set edilmesi
+            $viewData->viewFolder = $this->viewFolder;
+            $viewData->subViewFolder = "video/update";
+            $viewData->form_error = true;
+            $viewData->item = $item;
+
+            # ikinci parametre olan $viewData'yı bu view'e gönderelim ki viewFolder ve subViewFolder'ı index sayfasında kullanabilelim
+            $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData);
+        }
+    }
+
+    public function rankGalleryVideoSetter(){
+
+        $data = $this->input->post("data");
+
+        parse_str($data, $order); # data'dan gelenleri order isimli değişkene aktar (data bir array ve &'ları patlatarak parse eder yani diziye aktarır)
+
+        $items = $order["ord"];
+
+        foreach($items as $rank => $id){ # rank->key, id->value ( Array( [0] => 6)) rank = 0, id = 6
+            $this->video_model->update(
+                array(
+                    "id"        => $id,
+                    "rank !="   => $rank # sırası değiştirilen verinin altında kalanları değiştirmemek için. Yani konumu zaten değişmemişse bunu hiç değiştirme
+                ),
+
+                array(
+                    "rank"      => $rank
+                )
+            );
+        }
+
+    }
+    
+    public function galleryVideoIsActiveSetter($id){
+
+        if($id){
+
+            $isActive = ($this->input->post("data") === "true") ? 1 : 0;
+
+            $this->video_model->update( # update 2 tane parametre alır where,data
+                array(
+                    "id"    => $id,
+                ),
+
+                array(
+                    "isActive"  => $isActive,
+                )
+                );
+
+        }
+
+    }
+    
+    public function galleryVideoDelete($id, $gallery_id){
+
+            $delete = $this->video_model->delete(
+                array(
+                    "id"    => $id,
+                )
+            );
+
+            // TODO ALert Sistemi Eklenecek...
+            if($delete){
+                $alert = array(
+                    "title"  => "İşlem Başarılı",
+                    "text"   => "Kayıt başarılı bir şekilde silindi",
+                    "type"   => "success"
+                );
+            }
+            else{
+                $alert = array(
+                    "title"  => "İşlem Başarısız",
+                    "text"   => "Kayıt silme sırasında bir problem oluştu",
+                    "type"   => "error"
+                );
+            }
+
+            $this->session->set_flashdata("alert", $alert);
+            redirect(base_url("galleries/gallery_video_list/$gallery_id"));
+
+        }
+
 }
+

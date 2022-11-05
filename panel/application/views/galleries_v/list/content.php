@@ -53,18 +53,27 @@
                                     <?php 
                                     
                                         if($item->gallery_type == "image"){
+
                                             $button_icon = "fa-image";
+                                            $button_url = "galleries/upload_form/$item->id";
+                                            
                                         }
                                         else if($item->gallery_type == "video"){
+
                                             $button_icon = "fa-play-circle";
+                                            $button_url = "galleries/gallery_video_list/$item->id";
+                                        
                                         }
                                         else{
+
                                             $button_icon = "fa-folder";
+                                            $button_url = "galleries/upload_form/$item->id";
+                                        
                                         }
 
                                     ?>
                                     <a href="<?php echo base_url("galleries/update_form/$item->id"); # id'yi parametre olarak verdik ?>" class="btn btn-sm btn-info btn-outline"><i class="fa fa-pencil-square-o"></i> Düzenle</a>
-                                    <a href="<?php echo base_url("galleries/upload_form/$item->id"); # id'yi parametre olarak verdik ?>" class="btn btn-sm btn-dark btn-outline"><i class="fa <?php echo $button_icon; ?>"></i> Galeriye Göz At</a>
+                                    <a href="<?php echo base_url($button_url); # id'yi parametre olarak verdik ?>" class="btn btn-sm btn-dark btn-outline"><i class="fa <?php echo $button_icon; ?>"></i> Galeriye Göz At</a>
                                 </td>
                             </tr>
                         <?php } ?>

@@ -61,12 +61,19 @@
 
         <li>
           <a href="javascript:void(0)">
-          <i class="menu-icon zmdi zmdi-settings zmdi-hc-lg"></i>
+            <i class="menu-icon zmdi zmdi-settings zmdi-hc-lg"></i>
             <span class="menu-text">Ayarlar</span>
           </a>
         </li>
 
-        <li class="has-submenu">
+        <li>
+          <a href="<?php echo base_url("galleries") ?>">
+            <i class="menu-icon zmdi zmdi-apps zmdi-hc-lg"></i>
+            <span class="menu-text">Galeri İşlemleri</span>
+          </a>
+        </li>
+
+        <!-- <li class="has-submenu">
           <a href="javascript:void(0)" class="submenu-toggle">
             <i class="menu-icon zmdi zmdi-apps zmdi-hc-lg"></i>
             <span class="menu-text">Galeri İşlemleri</span>
@@ -78,7 +85,7 @@
             <li><a href="#"><span class="menu-text">Video Galerisi</span></a></li>
             <li><a href="#"><span class="menu-text">Dosya Galerisi</span></a></li>
           </ul>
-        </li>
+        </li> -->
 
         <li>
           <a href="javascript:void(0)">

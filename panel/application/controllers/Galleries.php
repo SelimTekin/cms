@@ -14,6 +14,14 @@ class Galleries extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin seb
         $this->load->model("image_model");
         $this->load->model("video_model");
         $this->load->model("file_model");
+
+        // Bir controller içeerisindeki bir metod çağırıldığında ilk olarak construct metodu çağırılır.
+		// O yüzden bütün metodların içerisinde yapmak yerine burada yaptık bu işlemi.
+		if(!get_active_user()){ # !get_active_user() -> get_active_user() false döndürüyorsa demek.
+
+			redirect("login");
+
+		}
     }
 
     public function index(){

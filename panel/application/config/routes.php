@@ -52,3 +52,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'dashboard';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+
+$route["login"] = "userop/login"; # url çubuğuna panelin altında login (panel/login) yazıldığında userop/login metoduna gitmesi için...
+$route["logout"] = "userop/logout";

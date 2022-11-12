@@ -11,6 +11,14 @@ class News extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebebi b
 
         // construct'ın altında tanımlıyoruz yoksa load isimli metodu tanımaz
         $this->load->model("news_model");
+
+        // Bir controller içeerisindeki bir metod çağırıldığında ilk olarak construct metodu çağırılır.
+		// O yüzden bütün metodların içerisinde yapmak yerine burada yaptık bu işlemi.
+		if(!get_active_user()){ # !get_active_user() -> get_active_user() false döndürüyorsa demek.
+
+			redirect("login");
+
+		}
     }
 
     public function index(){

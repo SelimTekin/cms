@@ -11,6 +11,14 @@ class Users extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebebi 
 
         // construct'ın altında tanımlıyoruz yoksa load isimli metodu tanımaz
         $this->load->model("user_model");
+
+        // Bir controller içeerisindeki bir metod çağırıldığında ilk olarak construct metodu çağırılır.
+		// O yüzden bütün metodların içerisinde yapmak yerine burada yaptık bu işlemi.
+		if(!get_active_user()){ # !get_active_user() -> get_active_user() false döndürüyorsa demek.
+
+			redirect("login");
+
+		}
     }
 
     public function index(){
@@ -48,7 +56,7 @@ class Users extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebebi 
         // Kurallar yazilir
         $this->form_validation->set_rules("user_name", "Kullanıcı Adı", "required|trim|is_unique[users.user_name]"); # is_unique -> benzersiz mi diye kontrol eder. Mesela aynı kullanıcı adından bir tane daha var mı diye kontrol eder. users.user_name -> users tablosundaki user_name alanını temsil eder
         $this->form_validation->set_rules("full_name", "Ad Soyad", "required|trim");
-        $this->form_validation->set_rules("email", "E-posta", "required|trim|valid_email[users.email]"); # Girilen e-posta adresinin geçerli olup olmadığını kontrol eder
+        $this->form_validation->set_rules("email", "E-posta", "required|trim|valid_email|is_unique[users.email]"); # Girilen e-posta adresinin geçerli olup olmadığını kontrol eder
         $this->form_validation->set_rules("password", "Şifre", "required|trim|min_length[6]|max_length[8]"); # min ve max girilecek olan karakter sayısını belirliyoruz
         $this->form_validation->set_rules("re_password", "Şifre", "required|trim|min_length[6]|max_length[8]|matches[password]"); # tekrar girilen şifre password(ilki) ile eşleşiyor mu
 

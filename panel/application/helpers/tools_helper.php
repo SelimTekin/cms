@@ -100,3 +100,16 @@ function get_readable_date($date){
     // return strftime("%e %B %Y", strtotime($date)); # Buraya gelen datetime'ı direkt günü rakam olarak(%e), ay bilgisini kelime(metinsel) olarak(%B), yıl bilgisini de rakamsal olarak(%Y) veriyor.
 
 }
+
+function get_active_user(){
+
+    $t = &get_instance();
+
+    $user = $t->session->userdata("user"); # session'da user diye bi şey varsa
+
+    if($user)
+        return $user;
+    else
+        return false;
+
+}

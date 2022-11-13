@@ -55,3 +55,5 @@ $route['translate_uri_dashes'] = FALSE;
 
 $route["login"] = "userop/login"; # url çubuğuna panelin altında login (panel/login) yazıldığında userop/login metoduna gitmesi için...
 $route["logout"] = "userop/logout";
+$route["sifremi-unuttum"] = "userop/forget_password";
+$route["reset-password"] = "userop/reset_password";

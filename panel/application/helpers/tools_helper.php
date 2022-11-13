@@ -120,10 +120,6 @@ function send_email($toEmail = "", $subject = "", $message = ""){
 
     $t->load->model("emailsettings_model");
 
-    // $t->load->helper("string"); # panel/system/helpers/string_helper.php # Userop içerisinde kullandık (reset_password metodunda)
-
-    // $temp_password = random_string(); # 8 karakterden oluşan random password üretir  # Userop içerisinde kullandık (reset_password metodunda)
-
     $email_settings = $t->emailsettings_model->get(
 
         array(

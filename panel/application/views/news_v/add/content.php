@@ -48,8 +48,8 @@
                     <?php } else{ ?>
 
                         <div class="form-group image_upload_container">
-                        <label>Görsel Seçiniz</label>
-                        <input type="file" name="img_url" class="form-control">
+                            <label>Görsel Seçiniz</label>
+                            <input type="file" name="img_url" class="form-control">
                         </div>
 
                         <div class="form-group video_url_container">

@@ -25,16 +25,16 @@ class Settings extends CI_Controller{ # CI -> CodeIgniter (extend etmemizin sebe
         $viewData = new stdClass();
 
         // Tablodan verilerin getirilmesi
-        $items = $this->settings_model->get();
+        $item = $this->settings_model->get();
 
-        if($items)
+        if($item)
             $viewData->subViewFolder = "update";
         else
             $viewData->subViewFolder = "no_content";
 
         // View'e gönderilecek değişkenlerin set edilmesi
         $viewData->viewFolder = $this->viewFolder;
-        $viewData->items = $items;
+        $viewData->item = $item;
 
         $this->load->view("{$viewData->viewFolder}/{$viewData->subViewFolder}/index", $viewData); # viewData içindeki değişkenleri index dosyasında kullanabilmek için (product_v'yi viewFolder adında gönderecek)
     }

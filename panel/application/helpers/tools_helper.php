@@ -116,6 +116,7 @@ function get_active_user(){
 
 function send_email($toEmail = "", $subject = "", $message = ""){
 
+    # codeigniter'a ait ya da bir object oriented yapı olmadığı için this anahtar kelimesini kullanamıyoruz. Kullanabilmek için bunu yapıyoruz
     $t = &get_instance();
 
     $t->load->model("emailsettings_model");
@@ -153,5 +154,39 @@ function send_email($toEmail = "", $subject = "", $message = ""){
     $t->email->message($message); # emailin kendisi
 
     return $t->email->send(); # true ya da false dönecek zaten o yüzden if içinde sormamıza gerek yok. (Userop içerisinde soruyoruz if ile.(reset_password metodunda))
+
+}
+
+function get_settings(){
+
+    # codeigniter'a ait ya da bir object oriented yapı olmadığı için this anahtar kelimesini kullanamıyoruz. Kullanabilmek için bunu yapıyoruz
+    $t = &get_instance();
+    
+    $t->load->model("settings_model");
+
+    
+    # hem navbar hem de head dosyası içerisinde çağırılıyor. Dolayısıyla iki kere veritabanına bağlanıyoruz. Bu mantıklı değil. 
+    # Bunun yerine session'da tutabiliriz. Eğer session'dan okuyabiliyorsa return'ı sesion'dan yapar yoksa veritabanından yapar.
+    if($t->session->userdata("settings")){
+        $settings = $t->session->userdata("settings");
+    }
+    else{
+        $settings = $t->settings_model->get();
+
+        if(!$settings){
+
+            # veritabanından array gelmiyor o yü<den böyle yaptık
+            $settings = new stdClass();
+
+            $settings->company_name = "CMS";
+            $settings->logo         = "default";
+
+        }
+
+        $t->session->set_userdata("settings", $settings); # $settings'e ata.
+    }
+
+
+    return $settings;
 
 }

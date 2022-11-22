@@ -109,6 +109,13 @@
         </li>
 
         <li>
+          <a href="<?php echo base_url("services"); ?>"> <!--Ürünlere tıklandığında controller altındaki product'ın index metdounu çağırır. O da listelemeyi getirecek-->
+          <i class="menu-icon fa fa-list"></i>
+            <span class="menu-text">Hizmetlerimiz</span>
+          </a>
+        </li>
+
+        <li>
           <a href="<?php echo base_url("news"); ?>">
           <i class="menu-icon fa fa-newspaper-o"></i>
             <span class="menu-text">Haberler</span>

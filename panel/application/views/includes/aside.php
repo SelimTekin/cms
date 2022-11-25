@@ -110,9 +110,28 @@
 
         <li>
           <a href="<?php echo base_url("services"); ?>"> <!--Ürünlere tıklandığında controller altındaki product'ın index metdounu çağırır. O da listelemeyi getirecek-->
-          <i class="menu-icon fa fa-list"></i>
+            <i class="menu-icon fa fa-cutlery"></i>
             <span class="menu-text">Hizmetlerimiz</span>
           </a>
+        </li>
+
+        <li class="has-submenu">
+          <a href="javascript:void(0)" class="submenu-toggle">
+            <i class="menu-icon fa fa-asterisk"></i>
+            <span class="menu-text">Portfolyo İşlemleri</span>
+          </a>
+          <ul class="submenu">
+            <li>
+            <a href="<?php echo base_url("portfolio_categories"); ?>">
+              <span class="menu-text">Portfolyo Kategorileri</span>
+            </a>
+            </li>
+            <li>
+              <a href="<?php echo base_url("portfolio"); ?>">
+                <span class="menu-text">Portfolyolar</span>
+              </a>
+            </li>
+          </ul>
         </li>
 
         <li>

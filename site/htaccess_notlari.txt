@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f # url'de göndermiş olduğumuz istek herhangi bir dosyaya denk gelmiyorsa (bir koşul yazdık)
+RewriteCond %{REQUEST_FILENAME} !-d # url'de göndermiş olduğumuz istek herhangi bir klasöre denk gelmiyorsa
+RewriteRule  ^(.*)$ index.php/$1 [L] # SAKIN () YERİNE {} YAZMA !!!
+# O halde bir tane rule yazalım. ^(.*)$ -> Başında ve sonunda ne olursa olsun manasına geliyor (^ -> başında)($ -> sonunda)($1 -> url'deki panel dizininden sonraki kısım oluyor)([L] -> yukarıdaki şartlar sağlandığında çalışacak en son kural bu olsun anlamında kullanılıyor)
+# Bize istediğimiz kadar controller oluşturmamızı sağlıyor ve adres çubuğunda(url) index.php dosyasının gösterilmesini engelliyor.
